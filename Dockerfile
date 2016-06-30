@@ -1,8 +1,11 @@
 FROM node:4.4-slim
 
-MAINTAINER Adrian Mouat <adrian@adrianmouat.com>
+MAINTAINER Anthony Moreno <anthony.moreno@sixt.com>
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+	git \
+	&& rm -rf /var/lib/apt/lists/*
+ 
 RUN groupadd -r slides && useradd -r -g slides slides
 
 RUN git clone https://github.com/hakimel/reveal.js.git /revealjs
@@ -16,8 +19,12 @@ RUN sed -i Gruntfile.js -e "s/files: \[ 'index\.html'\]/files: [ 'pres\/**' ]/"
 COPY index.html /revealjs/
 COPY custom.css /revealjs/css/
 COPY title.js /revealjs/plugin/
-COPY test_slides.md /revealjs/pres/slides.md
 COPY amtheme.css /revealjs/css/theme/
+
+# Ability to change presos on the fly
+ARG PRESO=derp
+ENV PRESO $PRESO
+COPY slides/${PRESO}.md /revealjs/pres/slides.md
 
 RUN chown -R slides /revealjs
 USER slides

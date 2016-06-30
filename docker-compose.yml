@@ -1,0 +1,11 @@
+version: '2'
+services:
+  revealjs:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        PRESO: main
+#        PRESO: anthony
+    ports:
+      - 8000:8000
